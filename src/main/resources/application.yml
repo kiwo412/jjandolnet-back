@@ -1,3 +1,8 @@
 spring:
   application:
     name: jjandolnet
+  profiles:
+    active: prod
+
+server:
+  port: 8080
