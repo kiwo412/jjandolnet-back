@@ -83,7 +83,7 @@ CREATE TABLE users
   email      varchar(255) NOT NULL,
   nickname   varchar(50)  NOT NULL,
   birth_date date         NOT NULL,
-  gender     char(1)      NOT NULL,
+  gender     varchar(1)      NOT NULL,
   create_at  timestamp    NOT NULL,
   rank_score integer      NOT NULL DEFAULT 0,
   PRIMARY KEY (id)

@@ -437,7 +437,7 @@
         "tableId": "T4x5bvq2_iCRylY-SOJaP",
         "name": "gender",
         "comment": "",
-        "dataType": "char(1)",
+        "dataType": "varchar(1)",
         "default": "",
         "options": 8,
         "ui": {
@@ -448,7 +448,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776515765862,
+          "updateAt": 1776609364165,
           "createAt": 1776500071093
         }
       },
