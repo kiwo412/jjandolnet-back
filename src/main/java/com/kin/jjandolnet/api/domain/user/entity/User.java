@@ -3,6 +3,7 @@ package com.kin.jjandolnet.api.domain.user.entity;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.post.entity.Comment;
 import com.kin.jjandolnet.api.domain.rank.entity.RankHistory;
+import com.kin.jjandolnet.api.domain.user.enums.Gender;
 import com.kin.jjandolnet.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,8 +40,8 @@ public class User extends BaseTimeEntity {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = false, length = 1)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "rank_score", nullable = false)
     private int rankScore = 0;
@@ -67,7 +68,7 @@ public class User extends BaseTimeEntity {
     // 빌더 패턴을 사용하여 객체 생성 (Setter 대신 사용)
     @Builder
     public User(String uuid, String password, String email, String nickname,
-                LocalDate birthDate, String gender) {
+                LocalDate birthDate, Gender gender) {
         this.uuid = uuid;
         this.password = password;
         this.email = email;
