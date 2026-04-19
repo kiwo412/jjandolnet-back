@@ -1,6 +1,11 @@
 spring:
   application:
     name: jjandolnet
+#  mvc:
+#    throw-exception-if-no-handler-found: true # 404 발생 시 예외를 던짐. 지원 중단됨.
+#  web:
+#    resources:
+#      add-mappings: false # 정적 리소스 핸들링 방지 (404를 위해 필요)
   profiles:
     active: local
 
