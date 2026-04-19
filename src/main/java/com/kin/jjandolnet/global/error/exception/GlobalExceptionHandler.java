@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
@@ -26,11 +29,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
         log.error("handleMethodArgumentNotValidException", ex);
+
         final ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+
+        //@valid 검증 예외
+        String errorMessage;
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+
+        if (!fieldErrors.isEmpty() && fieldErrors.get(0).getDefaultMessage() != null && !fieldErrors.get(0).getDefaultMessage().isBlank()) {
+            errorMessage = fieldErrors.get(0).getDefaultMessage();
+        } else {
+            errorMessage = errorCode.getMessage();
+        }
+        log.error("errorMessage: {}", errorMessage);
+        
         final ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
                 .code(errorCode.getCode())
-                .message(errorCode.getMessage())
+                .message(errorMessage)
                 .error(errorCode.name())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));

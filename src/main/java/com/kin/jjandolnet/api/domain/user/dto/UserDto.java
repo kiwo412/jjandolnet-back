@@ -2,6 +2,7 @@ package com.kin.jjandolnet.api.domain.user.dto;
 
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,10 +40,26 @@ public class UserDto {
     @Getter
     @Builder
     public static class CreateRequest {
+
+        @NotBlank(message = "이메일은 필수 입력값입니다.")
+        @Email(message = "이메일 형식이 올바르지 않습니다.")
+        @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
+                message = "이메일 형식이 올바르지 않습니다. (예: user@example.com)")
         private String email;
+
+        @NotBlank(message = "비밀번호는 필수 입력값입니다.")
+        @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
         private String password;
+
+        @NotBlank(message = "닉네임은 필수 입력값입니다.")
+        @Size(min = 2, max = 10, message = "닉네임은 2~10자 사이여야 합니다.")
         private String nickname;
+
+        @NotNull(message = "생년월일은 필수 입력값입니다.")
+        @Past(message = "생년월일을 제대로 입력해 주세요.")
         private LocalDate birthDate;
+
+        @NotNull(message = "성별을 선택해주세요.")
         private Gender gender;
 
         public User toEntity(String uuid, String encodedPassword) {
