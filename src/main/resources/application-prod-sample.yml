@@ -30,3 +30,8 @@ springdoc:
     display-request-duration: true
   api-docs:
     path: /api-docs
+
+jwt:
+  # 최소 32자 이상의 긴 문자열을 권장
+  secret:
+  expiration-time: # 토큰 유효 시간 (예: 24시간 = 24 * 60 * 60 * 1000ms)

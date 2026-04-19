@@ -2,9 +2,11 @@ package com.kin.jjandolnet.api.domain.user.dto;
 
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,12 +43,14 @@ public class UserDto {
     @Builder
     public static class CreateRequest {
 
+        @Schema(description = "사용자 이메일", example = "test1234@naver.com")
         @NotBlank(message = "이메일은 필수 입력값입니다.")
         @Email(message = "이메일 형식이 올바르지 않습니다.")
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
                 message = "이메일 형식이 올바르지 않습니다. (예: user@example.com)")
         private String email;
 
+        @Schema(example = "password1234!")
         @NotBlank(message = "비밀번호는 필수 입력값입니다.")
         @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
         private String password;
