@@ -78,7 +78,7 @@ COMMENT ON TABLE rank_history IS '랭크 점수 이력';
 CREATE TABLE roles
 (
   id        bigint      NOT NULL,
-  role_name varchar(50) NOT NULL,
+  role_name varchar(50) NOT NULL UNIQUE,
   PRIMARY KEY (id)
 );
 
@@ -86,8 +86,10 @@ COMMENT ON TABLE roles IS '권한';
 
 CREATE TABLE user_roles
 (
-  user_id   bigint NOT NULL,
-  role_role bigint NOT NULL
+  id      bigint NOT NULL,
+  user_id bigint NOT NULL,
+  role_id bigint NOT NULL,
+  PRIMARY KEY (id)
 );
 
 COMMENT ON TABLE user_roles IS '사용자권한매핑';
@@ -155,5 +157,5 @@ ALTER TABLE user_roles
 
 ALTER TABLE user_roles
   ADD CONSTRAINT FK_roles_TO_user_roles
-    FOREIGN KEY (role_role)
+    FOREIGN KEY (role_id)
     REFERENCES roles (id);

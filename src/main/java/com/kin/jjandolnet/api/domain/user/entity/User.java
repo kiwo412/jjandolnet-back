@@ -1,7 +1,5 @@
 package com.kin.jjandolnet.api.domain.user.entity;
 
-import com.kin.jjandolnet.api.domain.expense.entity.Expense;
-import com.kin.jjandolnet.api.domain.post.entity.Comment;
 import com.kin.jjandolnet.api.domain.rank.entity.RankHistory;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
 import com.kin.jjandolnet.global.common.BaseTimeEntity;
@@ -51,6 +49,9 @@ public class User extends BaseTimeEntity {
             , orphanRemoval = true)
     private List<RankHistory> rankHistories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserRole> userRoles = new ArrayList<>();
+
     //syncRankScore() 계산을 위한 연관관계 편의 메서드
     public void addRankHistory(RankHistory history) {
         this.rankHistories.add(history);
@@ -65,15 +66,24 @@ public class User extends BaseTimeEntity {
                 .sum();
     }
 
+    public void addRole(Role role) {
+        UserRole userRole = UserRole.builder()
+                .user(this)
+                .role(role)
+                .build();
+        this.userRoles.add(userRole);
+    }
+
     // 빌더 패턴을 사용하여 객체 생성 (Setter 대신 사용)
     @Builder
     public User(String uuid, String password, String email, String nickname,
-                LocalDate birthDate, Gender gender) {
+                LocalDate birthDate, Gender gender, List<UserRole> userRoles) {
         this.uuid = uuid;
         this.password = password;
         this.email = email;
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
+        this.userRoles = (userRoles != null) ? userRoles : new ArrayList<>();
     }
 }
