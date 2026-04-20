@@ -75,6 +75,23 @@ CREATE TABLE rank_history
 
 COMMENT ON TABLE rank_history IS '랭크 점수 이력';
 
+CREATE TABLE roles
+(
+  id        bigint      NOT NULL,
+  role_name varchar(50) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE roles IS '권한';
+
+CREATE TABLE user_roles
+(
+  user_id   bigint NOT NULL,
+  role_role bigint NOT NULL
+);
+
+COMMENT ON TABLE user_roles IS '사용자권한매핑';
+
 CREATE TABLE users
 (
   id         bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -83,7 +100,7 @@ CREATE TABLE users
   email      varchar(255) NOT NULL,
   nickname   varchar(50)  NOT NULL,
   birth_date date         NOT NULL,
-  gender     varchar(1)      NOT NULL,
+  gender     varchar(1)   NOT NULL,
   create_at  timestamp    NOT NULL,
   rank_score integer      NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
@@ -130,3 +147,13 @@ ALTER TABLE rank_history
   ADD CONSTRAINT FK_post_TO_rank_history
     FOREIGN KEY (post_id)
     REFERENCES post (id);
+
+ALTER TABLE user_roles
+  ADD CONSTRAINT FK_users_TO_user_roles
+    FOREIGN KEY (user_id)
+    REFERENCES users (id);
+
+ALTER TABLE user_roles
+  ADD CONSTRAINT FK_roles_TO_user_roles
+    FOREIGN KEY (role_role)
+    REFERENCES roles (id);
