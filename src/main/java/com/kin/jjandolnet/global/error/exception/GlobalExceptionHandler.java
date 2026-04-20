@@ -21,7 +21,7 @@ import java.util.List;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
-     * @Valid 또는 @Validated 에러 처리 (400 Bad Request)
+     * @Valid 또는 @Validated 검증 예외 처리 (400 Bad Request)
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -32,7 +32,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
 
-        //@valid 검증 예외
         String errorMessage;
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
