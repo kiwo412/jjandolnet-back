@@ -19,4 +19,13 @@ public class ApiResponse<T> {
                 .data(data)
                 .build();
     }
+
+    public static ApiResponse<Void> success(String message) {
+        return ApiResponse.<Void>builder()
+                .status("SUCCESS")
+                .message(message)
+                .data(null)
+                .build();
+    }
+
 }
