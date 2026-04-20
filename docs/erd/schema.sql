@@ -97,10 +97,10 @@ COMMENT ON TABLE user_roles IS '사용자권한매핑';
 CREATE TABLE users
 (
   id         bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
-  uuid       varchar(255) NOT NULL,
+  uuid       varchar(255) NOT NULL UNIQUE,
   password   varchar(255) NOT NULL,
-  email      varchar(255) NOT NULL,
-  nickname   varchar(50)  NOT NULL,
+  email      varchar(255) NOT NULL UNIQUE,
+  nickname   varchar(50)  NOT NULL UNIQUE,
   birth_date date         NOT NULL,
   gender     varchar(1)   NOT NULL,
   create_at  timestamp    NOT NULL,
