@@ -53,8 +53,9 @@ public class TokenProvider {
                 .signWith(key)
                 .compact();
 
-        // Refresh Token 생성
+        // Refresh Token 생성 (Subject 포함하여 재발급 시 사용 가능하도록 수정)
         String refreshToken = Jwts.builder()
+                .subject(authentication.getName())
                 .expiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key)
                 .compact();
@@ -108,5 +109,10 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    // 리프레시 토큰에서 Subject(Email) 추출
+    public String getEmailFromToken(String token) {
+        return parseClaims(token).getSubject();
     }
 }

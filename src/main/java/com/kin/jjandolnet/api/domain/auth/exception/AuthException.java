@@ -11,7 +11,7 @@ public class AuthException extends BusinessException {
 
     public static class LoginFailedException extends AuthException {
         public LoginFailedException() {
-            super(ErrorCode.LOGIN_FAILED);
+            super(ErrorCode.USER_NOT_FOUND);
         }
     }
 
