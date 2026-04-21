@@ -15,7 +15,10 @@ public enum ErrorCode {
     // 유저 관련 에러
     EMAIL_DUPLICATION(400, "U001", "이미 존재하는 이메일입니다."),
     NICKNAME_DUPLICATION(400, "U002", "이미 존재하는 닉네임입니다."),
-    USER_NOT_FOUND(404, "U003", "사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(404, "U003", "사용자를 찾을 수 없습니다."),
+
+    //로그인 관련 에러
+    LOGIN_FAILED(401, "L001", "계정 정보가 일치하지 않습니다.");
 
     private final int status;
     private final String code;
