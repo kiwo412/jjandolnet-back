@@ -1,19 +1,14 @@
 package com.kin.jjandolnet.api.domain.auth.service;
 
+import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,22 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
-                .map(this::createUserDetails)
+                .map(UserPrincipal::create)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
-    }
-
-    // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
-    private UserDetails createUserDetails(User user) {
-        //GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
-        List<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
-                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
-                .collect(Collectors.toList());
-
-        return new org.springframework.security.core.userdetails.User(
-                String.valueOf(user.getEmail()),
-                user.getPassword(),
-                authorities
-                //Collections.singleton(grantedAuthority)
-        );
     }
 }

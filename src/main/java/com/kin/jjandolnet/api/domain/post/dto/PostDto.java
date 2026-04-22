@@ -2,8 +2,11 @@ package com.kin.jjandolnet.api.domain.post.dto;
 
 import com.kin.jjandolnet.api.domain.post.entity.Post;
 import com.kin.jjandolnet.api.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +21,8 @@ public class PostDto {
         private String content;
         private int viewCount;
         private String status;
-        private String userNickname;
+        private String uuid;
+        private String nickname;
         private LocalDateTime createdAt;
 
         public static Response from(Post post) {
@@ -29,7 +33,8 @@ public class PostDto {
                     .content(post.getContent())
                     .viewCount(post.getViewCount())
                     .status(post.getStatus())
-                    .userNickname(post.getUser().getNickname())
+                    .uuid(post.getUser().getUuid())
+                    .nickname(post.getUser().getNickname())
                     .createdAt(post.getCreatedAt())
                     .build();
         }
@@ -49,7 +54,6 @@ public class PostDto {
                     .content(content)
                     .user(user)
                     .viewCount(0)
-                    .status("ACTIVE") // 기본 상태값 설정 가능
                     .build();
         }
     }

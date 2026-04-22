@@ -1,6 +1,9 @@
 package com.kin.jjandolnet.api.domain.auth.jwt;
 
+import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
 import com.kin.jjandolnet.api.domain.auth.dto.TokenDto;
+import com.kin.jjandolnet.api.domain.user.entity.User;
+import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -30,10 +32,12 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final SecretKey key;
+    private final UserRepository userRepository; // UserRepository 주입
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(@Value("${jwt.secret}") String secretKey, UserRepository userRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.userRepository = userRepository; // 주입된 UserRepository 초기화
     }
 
     public TokenDto generateTokenDto(Authentication authentication) {
@@ -47,7 +51,7 @@ public class TokenProvider {
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
-                .subject(authentication.getName())
+                .subject(authentication.getName()) // UserPrincipal의 getUsername() (email)
                 .claim(AUTHORITIES_KEY, authorities)
                 .expiration(accessTokenExpiresIn)
                 .signWith(key)
@@ -55,7 +59,7 @@ public class TokenProvider {
 
         // Refresh Token 생성 (Subject 포함하여 재발급 시 사용 가능하도록 수정)
         String refreshToken = Jwts.builder()
-                .subject(authentication.getName())
+                .subject(authentication.getName()) // UserPrincipal의 getUsername() (email)
                 .expiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key)
                 .compact();
@@ -75,16 +79,21 @@ public class TokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
-        // 클레임에서 권한 정보 가져오기
+        // 클레임에서 권한 정보 가져오기 (여기서는 사용하지 않지만, 기존 코드 유지)
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 생성해서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        // 토큰의 subject(email)로 User 엔티티를 조회하여 UserPrincipal 생성
+        String userEmail = claims.getSubject();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다.")); // 적절한 예외 처리 필요
 
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        UserDetails principal = UserPrincipal.create(user); // UserPrincipal 객체 생성
+
+        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
     public boolean validateToken(String token) {
