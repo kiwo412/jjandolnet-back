@@ -77,7 +77,7 @@ COMMENT ON TABLE rank_history IS '랭크 점수 이력';
 
 CREATE TABLE roles
 (
-  id        bigint      NOT NULL,
+  id        bigint      NOT NULL GENERATED ALWAYS AS IDENTITY,
   role_name varchar(50) NOT NULL UNIQUE,
   PRIMARY KEY (id)
 );
@@ -86,7 +86,7 @@ COMMENT ON TABLE roles IS '권한';
 
 CREATE TABLE user_roles
 (
-  id      bigint NOT NULL,
+  id      bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
   user_id bigint NOT NULL,
   role_id bigint NOT NULL,
   PRIMARY KEY (id)

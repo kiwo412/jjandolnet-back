@@ -4,8 +4,8 @@
   "settings": {
     "width": 3000,
     "height": 3000,
-    "scrollTop": -341.22,
-    "scrollLeft": -435.5831,
+    "scrollTop": -357.22,
+    "scrollLeft": -464.5831,
     "zoomLevel": 0.85,
     "show": 511,
     "database": 16,
@@ -1658,7 +1658,7 @@
         "comment": "",
         "dataType": "bigint",
         "default": "",
-        "options": 10,
+        "options": 11,
         "ui": {
           "keys": 1,
           "widthName": 60,
@@ -1667,7 +1667,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776657905095,
+          "updateAt": 1776834674183,
           "createAt": 1776657833997
         }
       },
@@ -1798,7 +1798,7 @@
         "comment": "",
         "dataType": "bigint",
         "default": "",
-        "options": 10,
+        "options": 11,
         "ui": {
           "keys": 1,
           "widthName": 60,
@@ -1807,7 +1807,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1776660022457,
+          "updateAt": 1776834675929,
           "createAt": 1776660008336
         }
       }
