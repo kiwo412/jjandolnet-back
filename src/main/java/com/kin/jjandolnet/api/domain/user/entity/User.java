@@ -44,6 +44,14 @@ public class User extends BaseTimeEntity {
     @Column(name = "rank_score", nullable = false)
     private int rankScore = 0;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job;
+
     @OneToMany(mappedBy = "user"
             , cascade = CascadeType.ALL
             , orphanRemoval = true)
@@ -77,13 +85,15 @@ public class User extends BaseTimeEntity {
     // 빌더 패턴을 사용하여 객체 생성 (Setter 대신 사용)
     @Builder
     public User(String uuid, String password, String email, String nickname,
-                LocalDate birthDate, Gender gender, List<UserRole> userRoles) {
+                LocalDate birthDate, Gender gender, Address address, Job job, List<UserRole> userRoles) {
         this.uuid = uuid;
         this.password = password;
         this.email = email;
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
+        this.address = address;
+        this.job = job;
         this.userRoles = (userRoles != null) ? userRoles : new ArrayList<>();
     }
 }

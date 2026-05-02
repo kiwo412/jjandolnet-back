@@ -1,4 +1,13 @@
 
+CREATE TABLE address
+(
+  id   bigint      NOT NULL GENERATED ALWAYS AS IDENTITY,
+  name varchar(50) NOT NULL UNIQUE,
+  PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE address IS '거주지';
+
 CREATE TABLE attachment
 (
   id        bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -47,6 +56,15 @@ CREATE TABLE expense_category
 );
 
 COMMENT ON TABLE expense_category IS '지출내역 카테고리';
+
+CREATE TABLE job
+(
+  id   bigint      NOT NULL GENERATED ALWAYS AS IDENTITY,
+  name varchar(50) NOT NULL UNIQUE,
+  PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE job IS '직업';
 
 CREATE TABLE post
 (
@@ -101,10 +119,11 @@ CREATE TABLE users
   password   varchar(255) NOT NULL,
   email      varchar(255) NOT NULL UNIQUE,
   nickname   varchar(50)  NOT NULL UNIQUE,
-  birth_date date         NOT NULL,
   gender     varchar(1)   NOT NULL,
   create_at  timestamp    NOT NULL,
   rank_score integer      NOT NULL DEFAULT 0,
+  address_id bigint       NOT NULL,
+  job_id     bigint       NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -159,3 +178,13 @@ ALTER TABLE user_roles
   ADD CONSTRAINT FK_roles_TO_user_roles
     FOREIGN KEY (role_id)
     REFERENCES roles (id);
+
+ALTER TABLE users
+  ADD CONSTRAINT FK_address_TO_users
+    FOREIGN KEY (address_id)
+    REFERENCES address (id);
+
+ALTER TABLE users
+  ADD CONSTRAINT FK_job_TO_users
+    FOREIGN KEY (job_id)
+    REFERENCES job (id);

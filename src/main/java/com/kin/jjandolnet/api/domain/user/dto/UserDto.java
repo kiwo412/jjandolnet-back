@@ -1,12 +1,13 @@
 package com.kin.jjandolnet.api.domain.user.dto;
 
+import com.kin.jjandolnet.api.domain.user.entity.Address;
+import com.kin.jjandolnet.api.domain.user.entity.Job;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,7 +67,13 @@ public class UserDto {
         @NotNull(message = "성별을 선택해주세요.")
         private Gender gender;
 
-        public User toEntity(String uuid, String encodedPassword) {
+        @NotNull(message = "거주 지역을 선택해주세요.")
+        private Long addressId;
+
+        @NotNull(message = "직업을 선택해주세요.")
+        private Long jobId;
+
+        public User toEntity(String uuid, String encodedPassword, Address address, Job job) {
             return User.builder()
                     .uuid(uuid)
                     .email(email)
@@ -74,6 +81,8 @@ public class UserDto {
                     .nickname(nickname)
                     .birthDate(birthDate)
                     .gender(gender)
+                    .address(address)
+                    .job(job)
                     .build();
         }
     }
