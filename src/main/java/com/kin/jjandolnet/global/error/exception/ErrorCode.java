@@ -11,6 +11,7 @@ public enum ErrorCode {
     INVALID_JSON_FORMAT(400, "C002", "JSON 파싱 중 에러가 발생했습니다."),
     METHOD_NOT_ALLOWED(405, "C003", "허용되지 않은 메서드입니다."),
     INTERNAL_SERVER_ERROR(500, "C004", "서버 내부 에러입니다."),
+    HANDLE_ACCESS_DENIED(403, "C005", "권한이 없습니다."),
 
     // 토큰 관련 에러
     INVALID_TOKEN(401, "T001", "유효하지 않은 토큰입니다."),

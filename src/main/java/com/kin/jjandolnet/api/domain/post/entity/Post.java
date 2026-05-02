@@ -78,4 +78,10 @@ public class Post extends BaseTimeEntity {
             attachments.forEach(this::addAttachment);
         }
     }
+
+    public void updatePost(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
+
 }

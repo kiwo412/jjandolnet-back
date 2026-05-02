@@ -3,6 +3,8 @@ package com.kin.jjandolnet.api.domain.post.dto;
 import com.kin.jjandolnet.api.domain.post.entity.Post;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,8 +45,11 @@ public class PostDto {
     @Getter
     @Builder
     public static class CreateRequest {
+        @NotBlank(message = "카테고리는 필수입니다.")
         private String category;
+        @NotBlank(message = "제목을 입력해주세요.")
         private String title;
+        @NotBlank(message = "내용을 입력해주세요.")
         private String content;
 
         public Post toEntity(User user) {
@@ -56,5 +61,16 @@ public class PostDto {
                     .viewCount(0)
                     .build();
         }
+    }
+
+    @Getter
+    @Builder
+    public static class updateRequest {
+        @NotNull(message = "ID는 필수입니다.")
+        private Long id;
+        @NotBlank(message = "제목을 입력해주세요.")
+        private String title;
+        @NotBlank(message = "내용을 입력해주세요.")
+        private String content;
     }
 }

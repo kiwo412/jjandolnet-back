@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -86,6 +87,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(errorCode.getMessage())
                 .error(errorCode.name())
                 .build();
+        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
+    }
+
+    /**
+     * @PreAuthorize 검증 실패 시 발생 (403 Forbidden)
+     */
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        log.error("AuthorizationDeniedException: {}", ex.getMessage());
+
+        final ErrorCode errorCode = ErrorCode.HANDLE_ACCESS_DENIED;
+        final ErrorResponse response = ErrorResponse.builder()
+                .status(errorCode.getStatus())
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .error(errorCode.name())
+                .build();
+
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -47,8 +49,11 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/post").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/post").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/post/**").permitAll()
+                        .requestMatchers("/api/v1/post/**").authenticated()
+                        //.requestMatchers(HttpMethod.POST,"/api/v1/post/**").authenticated()
+                        //.requestMatchers(HttpMethod.PUT,"/api/v1/post/**").authenticated()
+                        //.requestMatchers(HttpMethod.DELETE,"/api/v1/post/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);

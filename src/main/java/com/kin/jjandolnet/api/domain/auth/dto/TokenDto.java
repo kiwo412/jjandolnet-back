@@ -9,4 +9,7 @@ public class TokenDto {
     private String accessToken;
     private String refreshToken;
     private String grantType;
+
+    private String uuid;
+    private String nickname;
 }

@@ -75,10 +75,12 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
 
-        // AccessToken만 담은 응답 객체 생성
+        // AccessToken, uuid, nickname 담은 응답 객체 생성
         TokenResponse tokenResponse = TokenResponse.builder()
                 .accessToken(tokenDto.getAccessToken())
                 .grantType(tokenDto.getGrantType())
+                .uuid(tokenDto.getUuid())
+                .nickname(tokenDto.getNickname())
                 .build();
 
         ApiResponse<TokenResponse> response = ApiResponse.success("로그인 성공했습니다.", tokenResponse);
@@ -94,5 +96,8 @@ public class AuthController {
     public static class TokenResponse {
         private String accessToken;
         private String grantType;
+
+        private String uuid;
+        private String nickname;
     }
 }

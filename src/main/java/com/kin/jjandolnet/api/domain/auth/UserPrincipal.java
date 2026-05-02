@@ -17,13 +17,15 @@ public class UserPrincipal implements UserDetails {
     private final String email;
     private final String password;
     private final String nickname;
+    private final String uuid;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String email, String password, String nickname, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String email, String password, String nickname, String uuid, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.uuid = uuid;
         this.authorities = authorities;
     }
 
@@ -37,6 +39,7 @@ public class UserPrincipal implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getNickname(),
+                user.getUuid(),
                 authorities
         );
     }

@@ -64,10 +64,15 @@ public class TokenProvider {
                 .signWith(key)
                 .compact();
 
+        //uuid, nickname
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .uuid(principal.getUuid())
+                .nickname(principal.getNickname())
                 .build();
     }
 

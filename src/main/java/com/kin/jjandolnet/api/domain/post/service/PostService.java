@@ -13,14 +13,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Service
+@Service("postService")
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    public boolean isAuthorUuid(Long postId, String currentUserId) {
+        return postRepository.findById(postId)
+                .map(post -> post.getUser().getUuid().equals(currentUserId))
+                .orElse(false);
+    }
 
+    @Transactional(readOnly = true)
+    public Page<PostDto.Response> getPosts(Pageable pageable) {
+
+        return postRepository.findAll(pageable)
+                .map(PostDto.Response::from);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDto.Response getPost(Long id) {
+
+        return PostDto.Response.from(
+                postRepository.findById(id).orElseThrow(()-> new RuntimeException("해당 게시글을 찾을 수 없습니다.")));
+    }
+
+    @Transactional
     public Long createPost(PostDto.CreateRequest request, Long id){
 
         User user = userRepository.findById(id)
@@ -38,11 +58,17 @@ public class PostService {
         return savedPost.getId();
     }
 
-    @Transactional(readOnly = true)
-    public Page<PostDto.Response> getPosts(Pageable pageable) {
+    @Transactional
+    public Long updatePost(PostDto.updateRequest request){
 
-        return postRepository.findAll(pageable)
-                .map(PostDto.Response::from);
+        Post post = postRepository.findById(request.getId()).orElseThrow(()-> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        post.updatePost(request.getTitle(), request.getContent());
+
+        return post.getId();
+    }
+
+    public void deletePost(Long id){
+        postRepository.deleteById(id);
     }
 
 }
