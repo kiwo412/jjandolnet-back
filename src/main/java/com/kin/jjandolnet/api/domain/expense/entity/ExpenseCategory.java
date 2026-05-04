@@ -19,16 +19,8 @@ public class ExpenseCategory {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 255)
-    private String icon;
-
-    @Column(length = 10)
-    private String color;
-
     @Builder
-    public ExpenseCategory(String name, String icon, String color) {
+    public ExpenseCategory(String name) {
         this.name = name;
-        this.icon = icon;
-        this.color = color;
     }
 }

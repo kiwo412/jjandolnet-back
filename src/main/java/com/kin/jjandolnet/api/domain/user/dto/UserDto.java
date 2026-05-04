@@ -23,7 +23,6 @@ public class UserDto {
         private String nickname;
         private LocalDate birthDate;
         private Gender gender;
-        private int rankScore;
         private LocalDateTime createdAt;
 
         public static Response from(User user) {
@@ -34,7 +33,6 @@ public class UserDto {
                     .nickname(user.getNickname())
                     .birthDate(user.getBirthDate())
                     .gender(user.getGender())
-                    .rankScore(user.getRankScore())
                     .createdAt(user.getCreatedAt())
                     .build();
         }

@@ -11,15 +11,11 @@ public class CategoryDto {
     public static class Response {
         private Long id;
         private String name;
-        private String icon;
-        private String color;
 
         public static Response from(ExpenseCategory category) {
             return Response.builder()
                     .id(category.getId())
                     .name(category.getName())
-                    .icon(category.getIcon())
-                    .color(category.getColor())
                     .build();
         }
     }

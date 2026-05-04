@@ -1,6 +1,6 @@
 package com.kin.jjandolnet.api.domain.user.entity;
 
-import com.kin.jjandolnet.api.domain.rank.entity.RankHistory;
+import com.kin.jjandolnet.api.domain.expense.entity.Income;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
 import com.kin.jjandolnet.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -41,9 +41,6 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "rank_score", nullable = false)
-    private int rankScore = 0;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
@@ -55,24 +52,10 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user"
             , cascade = CascadeType.ALL
             , orphanRemoval = true)
-    private List<RankHistory> rankHistories = new ArrayList<>();
+    private List<Income> incomes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserRole> userRoles = new ArrayList<>();
-
-    //syncRankScore() 계산을 위한 연관관계 편의 메서드
-    public void addRankHistory(RankHistory history) {
-        this.rankHistories.add(history);
-        if (history.getUser() != this) {
-            history.setUser(this);
-        }
-    }
-
-    public void syncRankScore() {
-        this.rankScore = this.rankHistories.stream()
-                .mapToInt(RankHistory::getChangePoint)
-                .sum();
-    }
 
     public void addRole(Role role) {
         UserRole userRole = UserRole.builder()

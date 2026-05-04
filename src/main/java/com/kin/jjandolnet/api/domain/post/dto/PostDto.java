@@ -2,15 +2,12 @@ package com.kin.jjandolnet.api.domain.post.dto;
 
 import com.kin.jjandolnet.api.domain.post.entity.Post;
 import com.kin.jjandolnet.api.domain.user.entity.User;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class PostDto {
 
@@ -25,7 +22,7 @@ public class PostDto {
         private String status;
         private String uuid;
         private String nickname;
-        private LocalDateTime createdAt;
+        private LocalDate createdAt;
 
         public static Response from(Post post) {
             return Response.builder()
@@ -37,7 +34,7 @@ public class PostDto {
                     .status(post.getStatus())
                     .uuid(post.getUser().getUuid())
                     .nickname(post.getUser().getNickname())
-                    .createdAt(post.getCreatedAt())
+                    .createdAt(post.getCreatedAt().toLocalDate())
                     .build();
         }
     }

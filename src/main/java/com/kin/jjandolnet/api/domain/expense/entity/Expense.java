@@ -45,4 +45,12 @@ public class Expense extends BaseTimeEntity {
         this.user = user;
         this.category = category;
     }
+
+    public void updateExpense(Long amount, String memo, LocalDate expenseDate, ExpenseCategory category) {
+        this.amount = amount;
+        this.memo = memo;
+        this.expenseDate = expenseDate;
+        this.category = category;
+    }
+
 }

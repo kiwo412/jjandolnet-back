@@ -48,14 +48,23 @@ COMMENT ON TABLE expense IS '지출내역';
 
 CREATE TABLE expense_category
 (
-  id    bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
-  name  varchar(100) NOT NULL,
-  icon  varchar(255),
-  color varchar(10) ,
+  id   bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
+  name varchar(100) NOT NULL,
   PRIMARY KEY (id)
 );
 
 COMMENT ON TABLE expense_category IS '지출내역 카테고리';
+
+CREATE TABLE income
+(
+  id          bigint      NOT NULL GENERATED ALWAYS AS IDENTITY,
+  amount      bigint      NOT NULL,
+  income_date varchar(10) NOT NULL,
+  user_id     bigint      NOT NULL,
+  PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE income IS '월별수입';
 
 CREATE TABLE job
 (
@@ -80,18 +89,6 @@ CREATE TABLE post
 );
 
 COMMENT ON TABLE post IS '게시판';
-
-CREATE TABLE rank_history
-(
-  id           bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
-  change_point integer      NOT NULL,
-  reason       varchar(255),
-  user_id      bigint       NOT NULL,
-  post_id      bigint       NOT NULL UNIQUE,
-  PRIMARY KEY (id)
-);
-
-COMMENT ON TABLE rank_history IS '랭크 점수 이력';
 
 CREATE TABLE roles
 (
@@ -121,7 +118,6 @@ CREATE TABLE users
   nickname   varchar(50)  NOT NULL UNIQUE,
   gender     varchar(1)   NOT NULL,
   create_at  timestamp    NOT NULL,
-  rank_score integer      NOT NULL DEFAULT 0,
   address_id bigint       NOT NULL,
   job_id     bigint       NOT NULL,
   PRIMARY KEY (id)
@@ -159,16 +155,6 @@ ALTER TABLE attachment
     FOREIGN KEY (post_id)
     REFERENCES post (id);
 
-ALTER TABLE rank_history
-  ADD CONSTRAINT FK_users_TO_rank_history
-    FOREIGN KEY (user_id)
-    REFERENCES users (id);
-
-ALTER TABLE rank_history
-  ADD CONSTRAINT FK_post_TO_rank_history
-    FOREIGN KEY (post_id)
-    REFERENCES post (id);
-
 ALTER TABLE user_roles
   ADD CONSTRAINT FK_users_TO_user_roles
     FOREIGN KEY (user_id)
@@ -188,3 +174,8 @@ ALTER TABLE users
   ADD CONSTRAINT FK_job_TO_users
     FOREIGN KEY (job_id)
     REFERENCES job (id);
+
+ALTER TABLE income
+  ADD CONSTRAINT FK_users_TO_income
+    FOREIGN KEY (user_id)
+    REFERENCES users (id);
