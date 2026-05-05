@@ -4,6 +4,8 @@ import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
 import com.kin.jjandolnet.api.domain.auth.dto.TokenDto;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
+import com.kin.jjandolnet.global.error.exception.BusinessException;
+import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -81,7 +83,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new BusinessException(ErrorCode.INVALID_AUTHORITIES_KEY_TOKEN);
         }
 
         // 클레임에서 권한 정보 가져오기 (여기서는 사용하지 않지만, 기존 코드 유지)
@@ -94,7 +96,7 @@ public class TokenProvider {
         // 토큰의 subject(email)로 User 엔티티를 조회하여 UserPrincipal 생성
         String userEmail = claims.getSubject();
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다.")); // 적절한 예외 처리 필요
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         UserDetails principal = UserPrincipal.create(user); // UserPrincipal 객체 생성
 
@@ -106,13 +108,13 @@ public class TokenProvider {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            log.warn("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            log.warn("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            log.warn("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            log.warn("JWT 토큰이 잘못되었습니다.");
         }
         return false;
     }
