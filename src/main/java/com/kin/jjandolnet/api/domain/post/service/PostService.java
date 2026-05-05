@@ -5,6 +5,8 @@ import com.kin.jjandolnet.api.domain.post.entity.Post;
 import com.kin.jjandolnet.api.domain.post.repository.PostRepository;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
+import com.kin.jjandolnet.global.error.exception.BusinessException;
+import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,14 +39,15 @@ public class PostService {
     public PostDto.Response getPost(Long id) {
 
         return PostDto.Response.from(
-                postRepository.findById(id).orElseThrow(()-> new RuntimeException("해당 게시글을 찾을 수 없습니다.")));
+                postRepository.findById(id).orElseThrow(
+                        ()-> new BusinessException(ErrorCode.POST_NOT_FOUND)));
     }
 
     @Transactional
     public Long createPost(PostDto.CreateRequest request, Long id){
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Post post = Post.builder()
                 .user(user)
@@ -61,7 +64,8 @@ public class PostService {
     @Transactional
     public Long updatePost(PostDto.updateRequest request){
 
-        Post post = postRepository.findById(request.getId()).orElseThrow(()-> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        Post post = postRepository.findById(request.getId()).orElseThrow(
+                ()-> new BusinessException(ErrorCode.POST_NOT_FOUND));
         post.updatePost(request.getTitle(), request.getContent());
 
         return post.getId();

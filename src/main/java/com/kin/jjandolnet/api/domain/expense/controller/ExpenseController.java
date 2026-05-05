@@ -31,10 +31,11 @@ public class ExpenseController {
 
     @GetMapping("/getExpenseList")
     public ResponseEntity<ApiResponse<List<ExpenseDto.Response>>> getExpenseList(
+            @RequestParam String expenseDate,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
 
-        List<ExpenseDto.Response> expenseList = expenseService.getExpenseList(userPrincipal.getId());
+        List<ExpenseDto.Response> expenseList = expenseService.getExpenseList(userPrincipal.getId(), expenseDate);
         return ResponseEntity.ok(ApiResponse.success("소비내역 목록 조회가 완료되었습니다.", expenseList));
     }
 
@@ -72,6 +73,12 @@ public class ExpenseController {
         return ResponseEntity.ok(ApiResponse.success("소비내역이 수정되었습니다."));
     }
 
-
+    @DeleteMapping("{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteExpense(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        expenseService.deleteExpense(id, userPrincipal.getId());
+        return ResponseEntity.ok(ApiResponse.success("소비내역이 삭제되었습니다."));
+    }
 
 }
