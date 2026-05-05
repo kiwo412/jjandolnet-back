@@ -1,7 +1,9 @@
 package com.kin.jjandolnet.api.domain.expense.service;
 
+import com.kin.jjandolnet.api.domain.expense.constant.ExpenseScoreLevel;
 import com.kin.jjandolnet.api.domain.expense.dto.CategoryDto;
 import com.kin.jjandolnet.api.domain.expense.dto.ExpenseDto;
+import com.kin.jjandolnet.api.domain.expense.dto.ScoreDto;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
 import com.kin.jjandolnet.api.domain.expense.entity.Income;
@@ -15,6 +17,7 @@ import com.kin.jjandolnet.global.error.exception.BusinessException;
 import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import com.kin.jjandolnet.global.util.ValidateDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
@@ -58,6 +62,33 @@ public class ExpenseService {
         return incomeRepository.findByUserIdAndIncomeDate(userId, incomeDate)
                 .map(IncomeDto.Response::from)
                 .orElseGet(() -> IncomeDto.Response.builder().build());
+    }
+
+    @Transactional(readOnly = true)
+    public ScoreDto.Response getMyScore(Long userId, String scoreDate) {
+
+        LocalDate dateToCheck = YearMonth.parse(scoreDate).atDay(1);
+        validateDate.validateNotFutureAndServiceStartDate(dateToCheck);
+
+        //수입
+        Long income = incomeRepository.findByUserIdAndIncomeDate(userId, scoreDate)
+                .map(Income::getAmount)
+                .orElse(0L);
+
+        //월 소비 합계
+        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck)
+                .orElse(0L);
+
+        if(income == 0L || totalExpense == 0L){
+            return ScoreDto.Response.from(0L, 0L,
+                    "이번 달 수입/지출을 입력하고 짠돌력을 확인해보세요!", false);
+        }
+
+        Long rawScore = 100 - Math.round((double) totalExpense / income * 100);
+        Long score = Math.max(-100L, rawScore);
+        String message = ExpenseScoreLevel.findByScore(score).getMessage();
+
+        return ScoreDto.Response.from(score, totalExpense, message, true);
     }
 
     @Transactional

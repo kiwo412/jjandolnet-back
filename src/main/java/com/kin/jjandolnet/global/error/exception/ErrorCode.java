@@ -28,9 +28,11 @@ public enum ErrorCode {
     ADDRESS_NOT_FOUND(404, "U005", "거주 지역 정보를 찾을 수 없습니다."),
     JOB_NOT_FOUND(404, "U006", "직업 정보를 찾을 수 없습니다."),
 
-    // 지출 관련 예외
+    // 소비, 수입 관련 예외
     CATEGORY_NOT_FOUND(404, "E001", "카테고리를 찾을 수 없습니다."),
     EXPENSE_NOT_FOUND(404, "E002", "해당 소비 내역을 찾을 수 없습니다."),
+    INCOME_NOT_FOUND(404, "E003", "해당 수입 내역을 찾을 수 없습니다."),
+    INCOME_EXPENSE_ZERO(400, "E004", "수입과 소비내역이 있어야 확인 할 수 있습니다."),
 
     // 게시판 관련 예외
     POST_NOT_FOUND(404, "B001", "해당 게시글을 찾을 수 없습니다."),

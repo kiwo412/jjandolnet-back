@@ -3,6 +3,7 @@ package com.kin.jjandolnet.api.domain.expense.controller;
 import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
 import com.kin.jjandolnet.api.domain.expense.dto.CategoryDto;
 import com.kin.jjandolnet.api.domain.expense.dto.ExpenseDto;
+import com.kin.jjandolnet.api.domain.expense.dto.ScoreDto;
 import com.kin.jjandolnet.api.domain.expense.service.ExpenseService;
 import com.kin.jjandolnet.api.domain.expense.dto.IncomeDto;
 import com.kin.jjandolnet.global.common.ApiResponse;
@@ -49,6 +50,16 @@ public class ExpenseController {
         return ResponseEntity.ok(ApiResponse.success(incomeDate+" 수입 조회가 완료되었습니다.", incomeResponse));
     }
 
+    @GetMapping("/getMyScore")
+    public ResponseEntity<ApiResponse<ScoreDto.Response>> getMyScore(
+            @RequestParam String scoreDate,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+
+        ScoreDto.Response scoreResponse = expenseService.getMyScore(userPrincipal.getId(), scoreDate);
+        return ResponseEntity.ok(ApiResponse.success(scoreDate+" 짠돌력 조회가 완료되었습니다.", scoreResponse));
+    }
+
     @PostMapping("/cuIncome")
     public ResponseEntity<ApiResponse<Void>> cuIncome(
             @Valid @RequestBody IncomeDto.CuRequest request,
@@ -80,5 +91,7 @@ public class ExpenseController {
         expenseService.deleteExpense(id, userPrincipal.getId());
         return ResponseEntity.ok(ApiResponse.success("소비내역이 삭제되었습니다."));
     }
+
+
 
 }

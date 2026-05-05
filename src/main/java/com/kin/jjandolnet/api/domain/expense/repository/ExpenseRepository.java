@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+public interface ExpenseRepository extends JpaRepository<Expense, Long>, ExpenseRepositoryCustom {
     @Query("SELECT e FROM Expense e " +
             "WHERE e.user.id = :userId " +
             "AND CAST(e.expenseDate AS string) LIKE CONCAT(:expenseDate, '%') " +
