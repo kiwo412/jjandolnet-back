@@ -117,6 +117,17 @@ public class ExpenseService {
         return MyCategoryDto.Response.of(categoryInfos, true);
     }
 
+    @Transactional(readOnly = true)
+    public MainChartDto.Response getMainChart(Long userId, MainChartDto.searchCondition searchCondition) {
+
+        LocalDate now = LocalDate.now();
+
+        List<MainChartDto.MainChartInfo> chartInfos =
+                expenseRepository.findAverageByCondition(searchCondition, now);
+
+        return MainChartDto.Response.of(chartInfos);
+    }
+
     @Transactional
     public void cuIncome(IncomeDto.CuRequest request, Long userId){
 

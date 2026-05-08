@@ -66,6 +66,15 @@ public class ExpenseController {
         return ResponseEntity.ok(ApiResponse.success(categoryDate+" 카테고리별 짠돌력 조회가 완료되었습니다.", categoryResponse));
     }
 
+    @GetMapping("/getMainChart")
+    public ResponseEntity<ApiResponse<MainChartDto.Response>> getMainChart(
+            @Valid @ModelAttribute MainChartDto.searchCondition searchCondition,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        MainChartDto.Response response = expenseService.getMainChart(userPrincipal.getId(), searchCondition);
+        return ResponseEntity.ok(ApiResponse.success(" 짠한 차트 조회가 완료되었습니다.", response));
+    }
+
     @PostMapping("/cuIncome")
     public ResponseEntity<ApiResponse<Void>> cuIncome(
             @Valid @RequestBody IncomeDto.CuRequest request,

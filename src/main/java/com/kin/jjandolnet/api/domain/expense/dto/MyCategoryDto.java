@@ -8,7 +8,6 @@ public class MyCategoryDto {
 
     @Getter
     @Builder
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
         private List<CategoryInfo> categories;

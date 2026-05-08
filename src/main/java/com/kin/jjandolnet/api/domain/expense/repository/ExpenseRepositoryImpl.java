@@ -1,19 +1,23 @@
 package com.kin.jjandolnet.api.domain.expense.repository;
 
+import com.kin.jjandolnet.api.domain.expense.dto.MainChartDto;
 import com.kin.jjandolnet.api.domain.expense.dto.MyCategoryDto;
-import com.kin.jjandolnet.api.domain.expense.entity.QExpense;
-import com.kin.jjandolnet.api.domain.expense.entity.QExpenseCategory;
-import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 
 import static com.kin.jjandolnet.api.domain.expense.entity.QExpense.expense;
 import static com.kin.jjandolnet.api.domain.expense.entity.QExpenseCategory.expenseCategory;
+import static com.kin.jjandolnet.api.domain.user.entity.QAddress.address;
+import static com.kin.jjandolnet.api.domain.user.entity.QJob.job;
+import static com.kin.jjandolnet.api.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
 public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
@@ -56,6 +60,65 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
                 .groupBy(expenseCategory.id, expenseCategory.name)
                 .orderBy(expense.amount.sum().desc())
                 .fetch();
+    }
+
+    @Override
+    public List<MainChartDto.MainChartInfo> findAverageByCondition(MainChartDto.searchCondition searchCondition, LocalDate date) {
+        StringExpression groupByExpr = getGroupByExpression(searchCondition.getFilter());
+
+        JPAQuery<MainChartDto.MainChartInfo> query = queryFactory
+                .select(Projections.constructor(MainChartDto.MainChartInfo.class,
+                        groupByExpr,
+                        expense.amount.sum().doubleValue()
+                                .divide(user.id.countDistinct())
+                ))
+                .from(expense)
+                .join(expense.user, user);
+
+       if ("job".equals(searchCondition.getFilter())) {
+            query.join(user.job, job);
+        } else if ("addr".equals(searchCondition.getFilter())) {
+            query.join(user.address, address);
+        }
+
+        return query.where(
+                        monthEq(date),
+                        categoryEq(searchCondition.getSelectedCategory())
+                )
+                .groupBy(groupByExpr)
+                .fetch();
+    }
+
+    private StringExpression getGroupByExpression(String filter) {
+        if ("job".equals(filter)) {
+            return user.job.name;
+        } else if("addr".equals(filter)) {
+            return user.address.name;
+        }else {
+            int currentYear = LocalDate.now().getYear();
+
+            return Expressions.stringTemplate(
+                    "CASE " +
+                            "  WHEN (YEAR(CURRENT_DATE) - YEAR({0})) >= 60 THEN '60대 이상' " +
+                            "  ELSE CONCAT(FLOOR(ABS(YEAR({0}) - " + currentYear + ") / 10) * 10, '대') " +
+                            "END",
+                    user.birthDate
+            );
+        }
+    }
+
+    private BooleanExpression categoryEq(Long categoryId) {
+        return (categoryId == null || categoryId == 0L) ? null : expense.category.id.eq(categoryId);
+    }
+
+    private BooleanExpression monthEq(LocalDate date) {
+
+        if (date == null) return null;
+
+        LocalDate start = date.withDayOfMonth(1);
+        LocalDate end = date.with(TemporalAdjusters.lastDayOfMonth());
+
+        return expense.expenseDate.between(start, end);
     }
 
 }

@@ -117,6 +117,7 @@ CREATE TABLE users
   email      varchar(255) NOT NULL UNIQUE,
   nickname   varchar(50)  NOT NULL UNIQUE,
   gender     varchar(1)   NOT NULL,
+  birth_date date         NOT NULL,
   create_at  timestamp    NOT NULL,
   address_id bigint       NOT NULL,
   job_id     bigint       NOT NULL,
