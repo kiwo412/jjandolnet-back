@@ -1,15 +1,12 @@
 package com.kin.jjandolnet.api.domain.expense.service;
 
 import com.kin.jjandolnet.api.domain.expense.constant.ExpenseScoreLevel;
-import com.kin.jjandolnet.api.domain.expense.dto.CategoryDto;
-import com.kin.jjandolnet.api.domain.expense.dto.ExpenseDto;
-import com.kin.jjandolnet.api.domain.expense.dto.ScoreDto;
+import com.kin.jjandolnet.api.domain.expense.dto.*;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
 import com.kin.jjandolnet.api.domain.expense.entity.Income;
 import com.kin.jjandolnet.api.domain.expense.repository.CategoryRepository;
 import com.kin.jjandolnet.api.domain.expense.repository.ExpenseRepository;
-import com.kin.jjandolnet.api.domain.expense.dto.IncomeDto;
 import com.kin.jjandolnet.api.domain.expense.repository.IncomeRepository;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
@@ -89,6 +86,35 @@ public class ExpenseService {
         String message = ExpenseScoreLevel.findByScore(score).getMessage();
 
         return ScoreDto.Response.from(score, totalExpense, message, true);
+    }
+
+    @Transactional(readOnly = true)
+    public MyCategoryDto.Response getMyCategory(Long userId, String categoryDate) {
+
+        LocalDate dateToCheck = YearMonth.parse(categoryDate).atDay(1);
+        validateDate.validateNotFutureAndServiceStartDate(dateToCheck);
+
+        Long income = incomeRepository.findByUserIdAndIncomeDate(userId, categoryDate)
+                .map(Income::getAmount)
+                .orElse(0L);
+
+        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck)
+                .orElse(0L);
+
+        if(income == 0L || totalExpense == 0L){
+            return MyCategoryDto.Response.of(null, false);
+        }
+
+        List<MyCategoryDto.CategoryInfo> categoryInfos =
+                expenseRepository.getCategorySumByUserIdAndMonth(userId, dateToCheck);
+
+        categoryInfos.forEach(info -> {
+            double percentage = (double) info.getExpense() / totalExpense * 100;
+
+            info.setPercent(Math.round(percentage * 10) / 10.0);
+        });
+
+        return MyCategoryDto.Response.of(categoryInfos, true);
     }
 
     @Transactional

@@ -1,11 +1,8 @@
 package com.kin.jjandolnet.api.domain.expense.controller;
 
 import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
-import com.kin.jjandolnet.api.domain.expense.dto.CategoryDto;
-import com.kin.jjandolnet.api.domain.expense.dto.ExpenseDto;
-import com.kin.jjandolnet.api.domain.expense.dto.ScoreDto;
+import com.kin.jjandolnet.api.domain.expense.dto.*;
 import com.kin.jjandolnet.api.domain.expense.service.ExpenseService;
-import com.kin.jjandolnet.api.domain.expense.dto.IncomeDto;
 import com.kin.jjandolnet.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +55,15 @@ public class ExpenseController {
 
         ScoreDto.Response scoreResponse = expenseService.getMyScore(userPrincipal.getId(), scoreDate);
         return ResponseEntity.ok(ApiResponse.success(scoreDate+" 짠돌력 조회가 완료되었습니다.", scoreResponse));
+    }
+
+    @GetMapping("/getMyCategory")
+    public ResponseEntity<ApiResponse<MyCategoryDto.Response>> getMyCategory(
+            @RequestParam String categoryDate,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        MyCategoryDto.Response categoryResponse = expenseService.getMyCategory(userPrincipal.getId(), categoryDate);
+        return ResponseEntity.ok(ApiResponse.success(categoryDate+" 카테고리별 짠돌력 조회가 완료되었습니다.", categoryResponse));
     }
 
     @PostMapping("/cuIncome")

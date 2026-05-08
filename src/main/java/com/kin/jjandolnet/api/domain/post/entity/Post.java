@@ -1,6 +1,5 @@
 package com.kin.jjandolnet.api.domain.post.entity;
 
-import com.kin.jjandolnet.api.domain.rank.entity.RankHistory;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -46,21 +45,10 @@ public class Post extends BaseTimeEntity {
             , orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>();
 
-    //어차피 한개(1:1)라 굳이 지연로딩 안해도 됨.
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private RankHistory rankHistory;
-
     public void addAttachment(Attachment attachment) {
         this.attachments.add(attachment);
         if (attachment.getPost() != this) {
             attachment.setPost(this);
-        }
-    }
-
-    public void setRankHistory(RankHistory rankHistory) {
-        this.rankHistory = rankHistory;
-        if (rankHistory != null && rankHistory.getPost() != this) {
-            rankHistory.setPost(this);
         }
     }
 
