@@ -67,12 +67,20 @@ public class ExpenseController {
     }
 
     @GetMapping("/getMainChart")
-    public ResponseEntity<ApiResponse<MainChartDto.Response>> getMainChart(
-            @Valid @ModelAttribute MainChartDto.searchCondition searchCondition,
+    public ResponseEntity<ApiResponse<ChartDto.MainResponse>> getMainChart(
+            @Valid @ModelAttribute ChartDto.searchCondition searchCondition
+    ) {
+        ChartDto.MainResponse response = expenseService.getMainChart(searchCondition);
+        return ResponseEntity.ok(ApiResponse.success(" 짠한 차트(메인) 조회가 완료되었습니다.", response));
+    }
+
+    @GetMapping("/getSubChart1")
+    public ResponseEntity<ApiResponse<ChartDto.SubResponse>> getSubChart1(
+            @Valid @ModelAttribute ChartDto.searchCondition searchCondition,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        MainChartDto.Response response = expenseService.getMainChart(userPrincipal.getId(), searchCondition);
-        return ResponseEntity.ok(ApiResponse.success(" 짠한 차트 조회가 완료되었습니다.", response));
+        ChartDto.SubResponse response = expenseService.getSubChart1(userPrincipal.getId(), searchCondition);
+        return ResponseEntity.ok(ApiResponse.success(" 짠한 차트(sub) 조회가 완료되었습니다.", response));
     }
 
     @PostMapping("/cuIncome")

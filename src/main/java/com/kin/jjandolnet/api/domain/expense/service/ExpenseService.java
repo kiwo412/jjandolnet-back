@@ -1,6 +1,7 @@
 package com.kin.jjandolnet.api.domain.expense.service;
 
 import com.kin.jjandolnet.api.domain.expense.constant.ExpenseScoreLevel;
+import com.kin.jjandolnet.api.domain.expense.constant.SubChart1Level;
 import com.kin.jjandolnet.api.domain.expense.dto.*;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
@@ -73,7 +74,7 @@ public class ExpenseService {
                 .orElse(0L);
 
         //월 소비 합계
-        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck)
+        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck, null)
                 .orElse(0L);
 
         if(income == 0L || totalExpense == 0L){
@@ -98,7 +99,7 @@ public class ExpenseService {
                 .map(Income::getAmount)
                 .orElse(0L);
 
-        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck)
+        Long totalExpense = expenseRepository.sumAmountByUserIdAndMonth(userId, dateToCheck, null)
                 .orElse(0L);
 
         if(income == 0L || totalExpense == 0L){
@@ -118,14 +119,45 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public MainChartDto.Response getMainChart(Long userId, MainChartDto.searchCondition searchCondition) {
+    public ChartDto.MainResponse getMainChart(ChartDto.searchCondition searchCondition) {
 
         LocalDate now = LocalDate.now();
 
-        List<MainChartDto.MainChartInfo> chartInfos =
+        List<ChartDto.MainChartInfo> chartInfos =
                 expenseRepository.findAverageByCondition(searchCondition, now);
 
-        return MainChartDto.Response.of(chartInfos);
+        return ChartDto.MainResponse.of(chartInfos);
+    }
+
+    @Transactional(readOnly = true)
+    public ChartDto.SubResponse getSubChart1(Long userId, ChartDto.searchCondition searchCondition) {
+
+        double percent = 0;
+        String message;
+
+        LocalDate now = LocalDate.now();
+
+        String filter = searchCondition.getFilter();
+        Long selectedCategory = searchCondition.getSelectedCategory();
+
+        Long myTotal = expenseRepository.sumAmountByUserIdAndMonth(userId, now, selectedCategory).orElse(0L);
+
+        String myGroupValue = expenseRepository.findUserGroupValue(userId, filter);
+        Double groupAverage = expenseRepository.findGroupAverage(filter, myGroupValue, searchCondition, now);
+
+        if(myTotal == 0L || groupAverage == null){
+            return ChartDto.SubResponse.from(null,
+                    "이번 달 소비 내역이 없어 비교가 어려워요. 내 소비 내역을 먼저 등록해보는 건 어떨까요?",
+                    0.0, 0, 0L);
+        }
+
+        percent = (myTotal / groupAverage) * 100;
+        percent = Math.round(percent * 10.0) / 10.0;
+
+        SubChart1Level status = SubChart1Level.of(percent);
+        message = status.formatMessage(myGroupValue, percent);
+
+        return ChartDto.SubResponse.from(myGroupValue, message, percent, groupAverage, myTotal);
     }
 
     @Transactional

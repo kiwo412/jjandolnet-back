@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class MainChartDto {
+public class ChartDto {
 
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class Response {
-        private List<MainChartDto.MainChartInfo> mainChartValues;
+    public static class MainResponse {
+        private List<ChartDto.MainChartInfo> mainChartValues;
 
-        public static Response of(List<MainChartDto.MainChartInfo> chartData) {
-            return Response.builder()
+        public static MainResponse of(List<ChartDto.MainChartInfo> chartData) {
+            return MainResponse.builder()
                     .mainChartValues(chartData)
                     .build();
         }
@@ -40,6 +40,29 @@ public class MainChartDto {
         private MainChartInfo(String category, Long average) {
             this.category = category;
             this.average = average;
+        }
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class SubResponse {
+        private String category;
+        private String message;
+        private double percent;
+        private double categoryAverage;
+        private Long myTotal;
+
+        public static SubResponse from(
+                String category, String message, double percent, double categoryAverage,Long myTotal) {
+            return SubResponse.builder()
+                    .category(category)
+                    .message(message)
+                    .percent(percent)
+                    .categoryAverage(categoryAverage)
+                    .myTotal(myTotal)
+                    .build();
         }
 
     }

@@ -1,6 +1,6 @@
 package com.kin.jjandolnet.api.domain.expense.repository;
 
-import com.kin.jjandolnet.api.domain.expense.dto.MainChartDto;
+import com.kin.jjandolnet.api.domain.expense.dto.ChartDto;
 import com.kin.jjandolnet.api.domain.expense.dto.MyCategoryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
@@ -24,7 +24,7 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<Long> sumAmountByUserIdAndMonth(Long userId, LocalDate date) {
+    public Optional<Long> sumAmountByUserIdAndMonth(Long userId, LocalDate date, Long categoryId) {
 
         LocalDate start = date.withDayOfMonth(1);
         LocalDate end = date.withDayOfMonth(date.lengthOfMonth());
@@ -34,7 +34,8 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
                 .from(expense)
                 .where(
                         expense.user.id.eq(userId),
-                        expense.expenseDate.between(start, end)
+                        expense.expenseDate.between(start, end),
+                        categoryEq(categoryId)
                 )
                 .fetchOne();
 
@@ -63,11 +64,11 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
     }
 
     @Override
-    public List<MainChartDto.MainChartInfo> findAverageByCondition(MainChartDto.searchCondition searchCondition, LocalDate date) {
+    public List<ChartDto.MainChartInfo> findAverageByCondition(ChartDto.searchCondition searchCondition, LocalDate date) {
         StringExpression groupByExpr = getGroupByExpression(searchCondition.getFilter());
 
-        JPAQuery<MainChartDto.MainChartInfo> query = queryFactory
-                .select(Projections.constructor(MainChartDto.MainChartInfo.class,
+        JPAQuery<ChartDto.MainChartInfo> query = queryFactory
+                .select(Projections.constructor(ChartDto.MainChartInfo.class,
                         groupByExpr,
                         expense.amount.sum().doubleValue()
                                 .divide(user.id.countDistinct())
@@ -75,11 +76,8 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
                 .from(expense)
                 .join(expense.user, user);
 
-       if ("job".equals(searchCondition.getFilter())) {
-            query.join(user.job, job);
-        } else if ("addr".equals(searchCondition.getFilter())) {
-            query.join(user.address, address);
-        }
+        if ("job".equals(searchCondition.getFilter())) query.join(user.job, job);
+        else if ("addr".equals(searchCondition.getFilter())) query.join(user.address, address);
 
         return query.where(
                         monthEq(date),
@@ -87,6 +85,43 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
                 )
                 .groupBy(groupByExpr)
                 .fetch();
+    }
+
+    @Override
+    public String findUserGroupValue(Long userId, String filter) {
+        StringExpression groupByExpr = getGroupByExpression(filter);
+
+        JPAQuery<String> query = queryFactory
+                .select(groupByExpr)
+                .from(user);
+
+        if ("job".equals(filter)) query.join(user.job, job);
+        else if ("addr".equals(filter)) query.join(user.address, address);
+
+        return query.where(user.id.eq(userId))
+                .fetchOne();
+    }
+
+    @Override
+    public Double findGroupAverage(String filter, String groupValue, ChartDto.searchCondition condition, LocalDate date) {
+        StringExpression groupByExpr = getGroupByExpression(filter);
+
+        JPAQuery<Double> query = queryFactory
+                .select(expense.amount.sum().doubleValue()
+                        .divide(user.id.countDistinct()))
+                .from(expense)
+                .join(expense.user, user);
+
+
+        if ("job".equals(filter)) query.join(user.job, job);
+        else if ("addr".equals(filter)) query.join(user.address, address);
+
+        return query.where(
+                        monthEq(date),
+                        categoryEq(condition.getSelectedCategory()),
+                        groupByExpr.eq(groupValue) // 내 그룹(예: '30대')인 데이터만 필터링
+                )
+                .fetchOne();
     }
 
     private StringExpression getGroupByExpression(String filter) {
