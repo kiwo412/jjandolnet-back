@@ -35,12 +35,15 @@ public class PostService {
                 .map(PostDto.Response::from);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostDto.Response getPost(Long id) {
 
-        return PostDto.Response.from(
-                postRepository.findById(id).orElseThrow(
-                        ()-> new BusinessException(ErrorCode.POST_NOT_FOUND)));
+        Post post =postRepository.findById(id).orElseThrow(
+                ()-> new BusinessException(ErrorCode.POST_NOT_FOUND));
+
+        post.updateViewCount();
+
+        return PostDto.Response.from(post);
     }
 
     @Transactional
