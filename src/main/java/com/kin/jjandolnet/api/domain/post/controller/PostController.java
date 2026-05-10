@@ -1,6 +1,7 @@
 package com.kin.jjandolnet.api.domain.post.controller;
 
 import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
+import com.kin.jjandolnet.api.domain.post.dto.CommentDto;
 import com.kin.jjandolnet.api.domain.post.dto.PostDto;
 import com.kin.jjandolnet.api.domain.post.service.PostService;
 import com.kin.jjandolnet.global.common.ApiResponse;
@@ -32,12 +33,21 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.success("게시글 목록 조회가 완료되었습니다.", posts));
     }
 
-    @GetMapping
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PostDto.Response>> getPost(@PathVariable Long id) {
 
         PostDto.Response post = postService.getPost(id);
         return ResponseEntity.ok(ApiResponse.success("게시글 조회가 완료되었습니다.", post));
+    }
+
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<ApiResponse<Page<CommentDto.Response>>> getComments(
+            @PathVariable Long postId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<CommentDto.Response> comments = postService.getComments(postId, pageable);
+
+        return ResponseEntity.ok(ApiResponse.success("댓글 조회가 완료되었습니다.", comments));
     }
 
     @PostMapping
@@ -48,12 +58,28 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.success("게시글이 등록되었습니다.", postId));
     }
 
+    @PostMapping("/{postId}/comment")
+    public ResponseEntity<ApiResponse<Void>> createComment(
+            @Valid @RequestBody CommentDto.CreateRequest request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        postService.createComment(request, userPrincipal.getId());
+        return ResponseEntity.ok(ApiResponse.success("댓글이 등록되었습니다."));
+    }
+
     @PutMapping
     @PreAuthorize("@postService.isAuthorUuid(#request.getId(), authentication.principal.uuid)")
     public ResponseEntity<ApiResponse<Long>> updatePost(
             @Valid @RequestBody PostDto.updateRequest request) {
         Long postId = postService.updatePost(request);
         return ResponseEntity.ok(ApiResponse.success("게시글이 수정되었습니다.", postId));
+    }
+
+    @PutMapping("/{postId}/comment/{commentId}")
+    public ResponseEntity<ApiResponse<Void>> updateComment(
+            @Valid @RequestBody CommentDto.UpdateRequest request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        postService.updateComment(request, userPrincipal.getId());
+        return ResponseEntity.ok(ApiResponse.success("댓글이 수정되었습니다."));
     }
 
     @DeleteMapping("/{id}")
@@ -63,6 +89,15 @@ public class PostController {
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
 
         postService.deletePost(id);
+        return ResponseEntity.ok(ApiResponse.success("게시글 삭제가 완료되었습니다."));
+    }
+
+    @DeleteMapping("/{postId}/comment/{commentId}")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        postService.deleteComment(commentId, userPrincipal.getId());
         return ResponseEntity.ok(ApiResponse.success("게시글 삭제가 완료되었습니다."));
     }
 

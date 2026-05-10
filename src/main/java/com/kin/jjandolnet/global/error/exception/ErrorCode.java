@@ -36,6 +36,7 @@ public enum ErrorCode {
 
     // 게시판 관련 예외
     POST_NOT_FOUND(404, "B001", "해당 게시글을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(404, "B002", "해당 댓글을 찾을 수 없습니다."),
 
     //날짜 관련 예외
     INVALID_DATE_RANGE(400, "D001", "잘못된 날짜입니다.");
