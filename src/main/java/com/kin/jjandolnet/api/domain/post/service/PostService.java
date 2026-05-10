@@ -29,9 +29,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDto.Response> getPosts(Pageable pageable) {
+    public Page<PostDto.Response> getPosts(PostDto.SearchRequest searchRequest, Pageable pageable) {
 
-        return postRepository.findAll(pageable)
+        return postRepository.searchPosts(searchRequest, pageable)
                 .map(PostDto.Response::from);
     }
 

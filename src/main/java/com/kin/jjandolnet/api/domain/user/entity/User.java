@@ -87,4 +87,10 @@ public class User extends BaseTimeEntity {
         this.job = job;
     }
 
+    public void updateUser(String nickname, Address address, Job job){
+        this.nickname = nickname;
+        this.address = address;
+        this.job = job;
+    }
+
 }

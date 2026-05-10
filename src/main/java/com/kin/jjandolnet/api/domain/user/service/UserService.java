@@ -102,9 +102,13 @@ public class UserService {
         Job job = jobRepository.findById(request.getJobId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.JOB_NOT_FOUND));
 
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        if(request.getPassword() != null && !request.getPassword().isBlank()) {
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+            user.updateUser(request.getNickname(), encodedPassword, address, job);
+            return;
+        }
 
-        user.updateUser(request.getNickname(), encodedPassword, address, job);
+        user.updateUser(request.getNickname(), address, job);
 
     }
 

@@ -25,9 +25,10 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PostDto.Response>>> getPosts(
+            @ModelAttribute PostDto.SearchRequest searchRequest,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<PostDto.Response> posts = postService.getPosts(pageable);
+        Page<PostDto.Response> posts = postService.getPosts(searchRequest, pageable);
         return ResponseEntity.ok(ApiResponse.success("게시글 목록 조회가 완료되었습니다.", posts));
     }
 

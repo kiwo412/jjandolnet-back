@@ -41,6 +41,13 @@ public class PostDto {
 
     @Getter
     @Builder
+    public static class SearchRequest {
+        private String filter;
+        private String keyword;
+    }
+
+    @Getter
+    @Builder
     public static class CreateRequest {
         @NotBlank(message = "카테고리는 필수입니다.")
         private String category;
