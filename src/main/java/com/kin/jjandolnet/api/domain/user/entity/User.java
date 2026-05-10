@@ -79,4 +79,12 @@ public class User extends BaseTimeEntity {
         this.job = job;
         this.userRoles = (userRoles != null) ? userRoles : new ArrayList<>();
     }
+
+    public void updateUser(String nickname, String password, Address address, Job job){
+        this.nickname = nickname;
+        this.password = password;
+        this.address = address;
+        this.job = job;
+    }
+
 }

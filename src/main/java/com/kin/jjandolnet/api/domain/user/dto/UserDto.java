@@ -22,7 +22,9 @@ public class UserDto {
         private String email;
         private String nickname;
         private LocalDate birthDate;
-        private Gender gender;
+        private String gender;
+        private JobDto.Response job;
+        private AddressDto.Response address;
         private LocalDateTime createdAt;
 
         public static Response from(User user) {
@@ -32,7 +34,9 @@ public class UserDto {
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .birthDate(user.getBirthDate())
-                    .gender(user.getGender())
+                    .gender(user.getGender().name())
+                    .job(JobDto.Response.from(user.getJob()))
+                    .address(AddressDto.Response.from(user.getAddress()))
                     .createdAt(user.getCreatedAt())
                     .build();
         }
@@ -83,5 +87,26 @@ public class UserDto {
                     .job(job)
                     .build();
         }
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateRequest {
+
+        @Schema(example = "password1234!")
+        //업데이트 시엔 값이 있을 때만 8자 이상인지
+        @Pattern(regexp = "^$|^.{8,}$", message = "비밀번호는 최소 8자 이상이어야 합니다.")
+        private String password;
+
+        @NotBlank(message = "닉네임은 필수 입력값입니다.")
+        @Size(min = 2, max = 10, message = "닉네임은 2~10자 사이여야 합니다.")
+        private String nickname;
+
+        @NotNull(message = "거주 지역을 선택해주세요.")
+        private Long addressId;
+
+        @NotNull(message = "직업을 선택해주세요.")
+        private Long jobId;
+
     }
 }

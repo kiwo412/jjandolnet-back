@@ -42,13 +42,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**",
-                                "/api/v1/user/**",
                                 "/h2-console/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/post/**").permitAll()
                         .requestMatchers("/api/v1/chart/**").authenticated()
+                        .requestMatchers("/api/v1/user/**").authenticated()
                         .requestMatchers("/api/v1/post/**").authenticated()
                         //.requestMatchers(HttpMethod.POST,"/api/v1/post/**").authenticated()
                         //.requestMatchers(HttpMethod.PUT,"/api/v1/post/**").authenticated()

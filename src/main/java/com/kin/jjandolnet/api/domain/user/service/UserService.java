@@ -15,6 +15,7 @@ import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
 import com.kin.jjandolnet.global.error.exception.BusinessException;
 import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -44,7 +46,6 @@ public class UserService {
         }
 
         //회원가입 시 role_user 권한 부여
-        //admin 권한은 차후에 기존 admin이 승격 시키는 걸로 하자는 게 내 신조입니다.
         Role defaultRole = roleRepository.findById(1L)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_FOUND));
 
@@ -76,6 +77,35 @@ public class UserService {
                 .stream()
                 .map(JobDto.Response::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto.Response getUserDetail(Long userId) {
+        return userRepository.findById(userId).map(UserDto.Response::from)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public void updateUserDetail(UserDto.UpdateRequest request, Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getNickname().equals(request.getNickname())
+                && userRepository.existsByNickname(request.getNickname())) {
+            throw new UserException.DuplicateNicknameException();
+        }
+
+        Address address = addressRepository.findById(request.getAddressId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND));
+
+        Job job = jobRepository.findById(request.getJobId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.JOB_NOT_FOUND));
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        user.updateUser(request.getNickname(), encodedPassword, address, job);
+
     }
 
 }

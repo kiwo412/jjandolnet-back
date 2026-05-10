@@ -1,5 +1,6 @@
 package com.kin.jjandolnet.api.domain.user.controller;
 
+import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
 import com.kin.jjandolnet.api.domain.user.dto.AddressDto;
 import com.kin.jjandolnet.api.domain.user.dto.JobDto;
 import com.kin.jjandolnet.api.domain.user.dto.UserDto;
@@ -8,6 +9,7 @@ import com.kin.jjandolnet.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +20,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody UserDto.CreateRequest request) {
-        userService.register(request);
-
-        return ResponseEntity.ok(ApiResponse.success("회원가입이 완료되었습니다."));
-    }
 
     @GetMapping("/addressList")
     public ResponseEntity<ApiResponse<List<AddressDto.Response>>> addressList() {
@@ -38,5 +33,27 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("직업 목록 조회가 완료되었습니다.", jobList));
     }
 
+    @GetMapping("/myPage")
+    public ResponseEntity<ApiResponse<UserDto.Response>> getUserDetail(
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        UserDto.Response response = userService.getUserDetail(userPrincipal.getId());
+        return ResponseEntity.ok(ApiResponse.success("내 정보 조회가 완료되었습니다.", response));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody UserDto.CreateRequest request) {
+        userService.register(request);
+
+        return ResponseEntity.ok(ApiResponse.success("회원가입이 완료되었습니다."));
+    }
+
+    @PutMapping("/myPage")
+    public ResponseEntity<ApiResponse<Void>> updateUserDetail(
+            @Valid @RequestBody UserDto.UpdateRequest request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        userService.updateUserDetail(request, userPrincipal.getId());
+        return ResponseEntity.ok(ApiResponse.success("내 정보가 수정되었습니다."));
+    }
 
 }
