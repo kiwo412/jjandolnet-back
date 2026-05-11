@@ -93,4 +93,8 @@ public class User extends BaseTimeEntity {
         this.job = job;
     }
 
+    public void updateUser(String password){
+        this.password = password;
+    }
+
 }

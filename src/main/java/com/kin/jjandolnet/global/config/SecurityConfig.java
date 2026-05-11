@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/auth/**",
                                 "/api/v1/user/**",
+                                "/api/v1/mail/**",
                                 "/h2-console/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

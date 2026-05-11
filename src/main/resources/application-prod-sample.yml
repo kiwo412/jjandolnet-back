@@ -13,6 +13,20 @@ spring:
         format_sql: true
         default_batch_fetch_size: 300
 
+  #네이버 smtp 샘플
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: #[네이버 계정(example@naver.com)]
+    password: # [네이버 2단계 보안 비밀번호 ]
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            trust: smtp.naver.com
+
   web:
     #local p6spy
     p6spy:
