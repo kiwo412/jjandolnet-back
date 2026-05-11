@@ -66,12 +66,16 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
     @Override
     public List<ChartDto.MainChartInfo> findAverageByCondition(ChartDto.searchCondition searchCondition, LocalDate date) {
         StringExpression groupByExpr = getGroupByExpression(searchCondition.getFilter());
+        NumberExpression<Double> avgAmount = expense.amount.sum().doubleValue()
+                .divide(user.id.countDistinct());
+
+        NumberExpression<Double> roundedAvg = Expressions.numberTemplate(Double.class,
+                "ROUND({0}, 0)", avgAmount);
 
         JPAQuery<ChartDto.MainChartInfo> query = queryFactory
                 .select(Projections.constructor(ChartDto.MainChartInfo.class,
                         groupByExpr,
-                        expense.amount.sum().doubleValue()
-                                .divide(user.id.countDistinct())
+                        roundedAvg
                 ))
                 .from(expense)
                 .join(expense.user, user);
@@ -106,9 +110,13 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
     public Double findGroupAverage(String filter, String groupValue, ChartDto.searchCondition condition, LocalDate date) {
         StringExpression groupByExpr = getGroupByExpression(filter);
 
+        NumberExpression<Double> avgExpression = expense.amount.sum().coalesce(0L).doubleValue()
+                .divide(user.id.countDistinct());
+
+        NumberExpression<Double> roundedAvg = Expressions.numberTemplate(Double.class, "ROUND({0}, 0)", avgExpression);
+
         JPAQuery<Double> query = queryFactory
-                .select(expense.amount.sum().doubleValue()
-                        .divide(user.id.countDistinct()))
+                .select(roundedAvg)
                 .from(expense)
                 .join(expense.user, user);
 
@@ -119,7 +127,7 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
         return query.where(
                         monthEq(date),
                         categoryEq(condition.getSelectedCategory()),
-                        groupByExpr.eq(groupValue) // 내 그룹(예: '30대')인 데이터만 필터링
+                        groupByExpr.eq(groupValue)
                 )
                 .fetchOne();
     }
