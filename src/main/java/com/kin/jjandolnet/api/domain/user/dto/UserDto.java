@@ -109,4 +109,23 @@ public class UserDto {
         private Long jobId;
 
     }
+
+    @Getter
+    @Builder
+    public static class FindIdRequest {
+
+        @NotNull(message = "생년월일은 필수 입력값입니다.")
+        @Past(message = "생년월일을 제대로 입력해 주세요.")
+        private LocalDate birthDate;
+
+        @NotNull(message = "성별을 선택해주세요.")
+        private Gender gender;
+
+        @NotNull(message = "거주 지역을 선택해주세요.")
+        private Long addressId;
+
+        @NotNull(message = "직업을 선택해주세요.")
+        private Long jobId;
+
+    }
 }

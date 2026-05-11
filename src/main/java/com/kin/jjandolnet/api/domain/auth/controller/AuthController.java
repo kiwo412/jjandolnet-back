@@ -9,9 +9,6 @@ import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -29,13 +26,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody AuthDto.LoginRequest request) {
-        TokenDto tokenDto = authService.login(request);
-        return createTokenResponseWithCookie(tokenDto);
+    public ResponseEntity<ApiResponse<TokenDto.Response>> login(@Valid @RequestBody AuthDto.LoginRequest request) {
+        TokenDto.Response tokenResponseDto = authService.login(request);
+        return createTokenResponseWithCookie(tokenResponseDto);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<TokenResponse>> refresh(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<TokenDto.Response>> refresh(HttpServletRequest request) {
         // 쿠키에서 refreshToken 추출
         String refreshToken = Arrays.stream(request.getCookies() == null ? new Cookie[0] : request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
@@ -43,8 +40,8 @@ public class AuthController {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_NOT_FOUND));
 
-        TokenDto tokenDto = authService.refresh(refreshToken);
-        return createTokenResponseWithCookie(tokenDto);
+        TokenDto.Response tokenResponseDto = authService.refresh(refreshToken);
+        return createTokenResponseWithCookie(tokenResponseDto);
     }
 
     @PostMapping("/logout")
@@ -61,13 +58,11 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(response);
-
-
     }
 
-    private ResponseEntity<ApiResponse<TokenResponse>> createTokenResponseWithCookie(TokenDto tokenDto) {
+    private ResponseEntity<ApiResponse<TokenDto.Response>> createTokenResponseWithCookie(TokenDto.Response tokenResponseDto) {
         // RefreshToken을 HttpOnly 쿠키에 저장
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponseDto.getRefreshToken())
                 .httpOnly(true)
                 .secure(false) // 로컬 환경(HTTP)에서는 false, 운영(HTTPS) 환경에서는 true 권장
                 .path("/")
@@ -75,29 +70,10 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
 
-        // AccessToken, uuid, nickname 담은 응답 객체 생성
-        TokenResponse tokenResponse = TokenResponse.builder()
-                .accessToken(tokenDto.getAccessToken())
-                .grantType(tokenDto.getGrantType())
-                .uuid(tokenDto.getUuid())
-                .nickname(tokenDto.getNickname())
-                .build();
-
-        ApiResponse<TokenResponse> response = ApiResponse.success("로그인 성공했습니다.", tokenResponse);
+        ApiResponse<TokenDto.Response> response = ApiResponse.success("로그인 성공했습니다.", tokenResponseDto);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(response);
-    }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    public static class TokenResponse {
-        private String accessToken;
-        private String grantType;
-
-        private String uuid;
-        private String nickname;
     }
 }

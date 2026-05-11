@@ -42,7 +42,7 @@ public class TokenProvider {
         this.userRepository = userRepository; // 주입된 UserRepository 초기화
     }
 
-    public TokenDto generateTokenDto(Authentication authentication) {
+    public TokenDto.Response generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -69,7 +69,7 @@ public class TokenProvider {
         //uuid, nickname
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
-        return TokenDto.builder()
+        return TokenDto.Response.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

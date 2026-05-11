@@ -41,18 +41,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(HttpMethod.GET,"/api/v1/post/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/user/myPage").authenticated()
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/user/myPage").authenticated()
+                        .requestMatchers("/api/v1/chart/**").authenticated()
+                        .requestMatchers("/api/v1/post/**").authenticated()
+
                         .requestMatchers("/api/v1/auth/**",
+                                "/api/v1/user/**",
                                 "/h2-console/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/post/**").permitAll()
-                        .requestMatchers("/api/v1/chart/**").authenticated()
-                        .requestMatchers("/api/v1/user/**").authenticated()
-                        .requestMatchers("/api/v1/post/**").authenticated()
-                        //.requestMatchers(HttpMethod.POST,"/api/v1/post/**").authenticated()
-                        //.requestMatchers(HttpMethod.PUT,"/api/v1/post/**").authenticated()
-                        //.requestMatchers(HttpMethod.DELETE,"/api/v1/post/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);

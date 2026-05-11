@@ -85,6 +85,14 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public String findEmail(UserDto.FindIdRequest request) {
+        String email = userRepository.findEmailByCondition(request)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        return email;
+    }
+
     @Transactional
     public void updateUserDetail(UserDto.UpdateRequest request, Long userId){
 

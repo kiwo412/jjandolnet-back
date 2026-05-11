@@ -23,7 +23,7 @@ public enum ErrorCode {
     // 유저 관련 예외
     EMAIL_DUPLICATION(400, "U001", "이미 존재하는 이메일입니다."),
     NICKNAME_DUPLICATION(400, "U002", "이미 존재하는 닉네임입니다."),
-    USER_NOT_FOUND(401, "U003", "사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND(404, "U003", "사용자를 찾을 수 없습니다."),
     ROLE_NOT_FOUND(404, "U004", "기본 권한을 찾을 수 없습니다."),
     ADDRESS_NOT_FOUND(404, "U005", "거주 지역 정보를 찾을 수 없습니다."),
     JOB_NOT_FOUND(404, "U006", "직업 정보를 찾을 수 없습니다."),

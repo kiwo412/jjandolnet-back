@@ -23,7 +23,7 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
 
     @Transactional
-    public TokenDto login(AuthDto.LoginRequest request) {
+    public TokenDto.Response login(AuthDto.LoginRequest request) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
@@ -40,7 +40,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto refresh(String refreshToken) {
+    public TokenDto.Response refresh(String refreshToken) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new BusinessException(ErrorCode.INVALID_TOKEN);

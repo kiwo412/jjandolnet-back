@@ -8,18 +8,6 @@ CREATE TABLE address
 
 COMMENT ON TABLE address IS '거주지';
 
-CREATE TABLE attachment
-(
-  id        bigint       NOT NULL GENERATED ALWAYS AS IDENTITY,
-  file_name varchar(255) NOT NULL,
-  file_path varchar(500) NOT NULL,
-  file_size bigint       NOT NULL,
-  post_id   bigint       NOT NULL,
-  PRIMARY KEY (id)
-);
-
-COMMENT ON TABLE attachment IS '첨부파일';
-
 CREATE TABLE comment
 (
   id        bigint    NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -150,11 +138,6 @@ ALTER TABLE expense
   ADD CONSTRAINT FK_expense_category_TO_expense
     FOREIGN KEY (category_id)
     REFERENCES expense_category (id);
-
-ALTER TABLE attachment
-  ADD CONSTRAINT FK_post_TO_attachment
-    FOREIGN KEY (post_id)
-    REFERENCES post (id);
 
 ALTER TABLE user_roles
   ADD CONSTRAINT FK_users_TO_user_roles

@@ -8,12 +8,14 @@ import com.kin.jjandolnet.api.domain.user.service.UserService;
 import com.kin.jjandolnet.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -46,6 +48,12 @@ public class UserController {
         userService.register(request);
 
         return ResponseEntity.ok(ApiResponse.success("회원가입이 완료되었습니다."));
+    }
+
+    @PostMapping("/findEmail")
+    public ResponseEntity<ApiResponse<String>> findEmail(@Valid @RequestBody UserDto.FindIdRequest request) {
+        String email = userService.findEmail(request);
+        return ResponseEntity.ok(ApiResponse.success("아이디 찾기가 완료되었습니다.",email));
     }
 
     @PutMapping("/myPage")
