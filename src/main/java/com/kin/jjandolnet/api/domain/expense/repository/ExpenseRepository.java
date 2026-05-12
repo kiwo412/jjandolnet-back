@@ -1,7 +1,6 @@
 package com.kin.jjandolnet.api.domain.expense.repository;
 
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
-import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
 import com.kin.jjandolnet.api.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

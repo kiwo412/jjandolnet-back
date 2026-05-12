@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 @Entity
 @Getter
 @Table(name = "user_roles")

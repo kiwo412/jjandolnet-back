@@ -1,7 +1,6 @@
 package com.kin.jjandolnet.api.domain.auth.service;
 
 import com.kin.jjandolnet.api.domain.auth.UserPrincipal;
-import com.kin.jjandolnet.api.domain.user.entity.User;
 import com.kin.jjandolnet.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

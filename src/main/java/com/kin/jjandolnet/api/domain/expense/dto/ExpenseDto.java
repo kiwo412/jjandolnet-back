@@ -3,7 +3,6 @@ package com.kin.jjandolnet.api.domain.expense.dto;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
 import com.kin.jjandolnet.api.domain.user.entity.User;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
