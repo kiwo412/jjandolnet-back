@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,13 +35,16 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenDto.Response>> refresh(HttpServletRequest request) {
         // 쿠키에서 refreshToken 추출
-        String refreshToken = Arrays.stream(request.getCookies() == null ? new Cookie[0] : request.getCookies())
+        Optional<String> refreshToken = Arrays.stream(request.getCookies() == null ? new Cookie[0] : request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
                 .map(Cookie::getValue)
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_NOT_FOUND));
+                .findFirst();
 
-        TokenDto.Response tokenResponseDto = authService.refresh(refreshToken);
+        if (refreshToken.isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.tokenFail(ErrorCode.TOKEN_NOT_FOUND));
+        }
+
+        TokenDto.Response tokenResponseDto = authService.refresh(refreshToken.get());
         return createTokenResponseWithCookie(tokenResponseDto);
     }
 
