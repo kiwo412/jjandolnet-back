@@ -145,7 +145,7 @@ public class ExpenseService {
         String myGroupValue = expenseRepository.findUserGroupValue(userId, filter);
         Double groupAverage = expenseRepository.findGroupAverage(filter, myGroupValue, searchCondition, now);
 
-        if(myTotal == 0L || groupAverage == null){
+        if(myTotal == 0L || groupAverage == null || groupAverage == 0.0){
             return ChartDto.SubResponse.from(null,
                     "이번 달 소비 내역이 없어 비교가 어려워요. 내 소비 내역을 먼저 등록해보는 건 어떨까요?",
                     0.0, 0, 0L);

@@ -1,5 +1,6 @@
 package com.kin.jjandolnet.api.domain.user.entity;
 
+import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.Income;
 import com.kin.jjandolnet.api.domain.user.enums.Gender;
 import com.kin.jjandolnet.global.common.BaseTimeEntity;
@@ -48,6 +49,11 @@ public class User extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
+
+    @OneToMany(mappedBy = "user"
+            , cascade = CascadeType.ALL
+            , orphanRemoval = true)
+    private List<Expense> expenses = new ArrayList<>();
 
     @OneToMany(mappedBy = "user"
             , cascade = CascadeType.ALL

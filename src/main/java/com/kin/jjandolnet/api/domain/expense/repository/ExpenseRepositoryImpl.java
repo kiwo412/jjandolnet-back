@@ -110,8 +110,12 @@ public class ExpenseRepositoryImpl implements ExpenseRepositoryCustom{
     public Double findGroupAverage(String filter, String groupValue, ChartDto.searchCondition condition, LocalDate date) {
         StringExpression groupByExpr = getGroupByExpression(filter);
 
-        NumberExpression<Double> avgExpression = expense.amount.sum().coalesce(0L).doubleValue()
-                .divide(user.id.countDistinct());
+        NumberExpression<Long> userCount = user.id.countDistinct();
+
+        NumberExpression<Double> avgExpression = new CaseBuilder()
+                .when(userCount.gt(0L))
+                .then(expense.amount.sum().coalesce(0L).doubleValue().divide(userCount))
+                .otherwise(0.0);
 
         NumberExpression<Double> roundedAvg = Expressions.numberTemplate(Double.class, "ROUND({0}, 0)", avgExpression);
 
