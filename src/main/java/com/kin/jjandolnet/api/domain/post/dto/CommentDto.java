@@ -1,6 +1,7 @@
 package com.kin.jjandolnet.api.domain.post.dto;
 
 import com.kin.jjandolnet.api.domain.post.entity.Comment;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -33,8 +34,10 @@ public class CommentDto {
     @Getter
     @Builder
     public static class CreateRequest {
+        @Schema(example = "test comment content")
         @NotBlank(message = "댓글을 입력해주세요.")
         private String content;
+        @Schema(example = "1")
         @NotNull(message = "글 정보가 없습니다.")
         private Long postId;
     }
@@ -42,10 +45,13 @@ public class CommentDto {
     @Getter
     @Builder
     public static class UpdateRequest {
+        @Schema(example = "test update comment content")
         @NotBlank(message = "댓글을 입력해주세요.")
         private String content;
+        @Schema(example = "1")
         @NotNull(message = "글 정보가 없습니다.")
         private Long postId;
+        @Schema(example = "1")
         @NotNull(message = "댓글 정보가 없습니다.")
         private Long id;
     }

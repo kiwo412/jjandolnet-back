@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +39,21 @@ public class UserService {
     @Transactional
     public void register(UserDto.CreateRequest request) {
 
+        LocalDate birthDate = request.getBirthDate();
+        LocalDate now = LocalDate.now();
+
+        int age = Period.between(birthDate, now).getYears();
+
         //중복 체크
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new UserException.DuplicateEmailException();
         }
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new UserException.DuplicateNicknameException();
+        }
+
+        if (age < 14) {
+            throw new UserException.UnderageException();
         }
 
         //회원가입 시 role_user 권한 부여

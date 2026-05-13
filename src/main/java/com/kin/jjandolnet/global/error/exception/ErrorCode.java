@@ -12,7 +12,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "C003", "허용되지 않은 메서드입니다."),
     INTERNAL_SERVER_ERROR(500, "C004", "서버 내부 에러입니다."),
     HANDLE_ACCESS_DENIED(403, "C005", "권한이 없습니다."),
-    UNAUTHORIZED(401, "C006", "잘못된 접근입니다."),
+    UNAUTHORIZED(401, "C006", "로그인이 필요합니다."),
 
     // 토큰 관련 예외
     INVALID_TOKEN(401, "T001", "유효하지 않은 토큰입니다."),
@@ -28,6 +28,7 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(404, "U004", "기본 권한을 찾을 수 없습니다."),
     ADDRESS_NOT_FOUND(404, "U005", "거주 지역 정보를 찾을 수 없습니다."),
     JOB_NOT_FOUND(404, "U006", "직업 정보를 찾을 수 없습니다."),
+    UNDERAGE(400, "U007", "만 14세 미만은 서비스에 가입할 수 없습니다."),
 
     // 소비, 수입 관련 예외
     CATEGORY_NOT_FOUND(404, "E001", "카테고리를 찾을 수 없습니다."),

@@ -21,5 +21,11 @@ public class UserException extends BusinessException {
         }
     }
 
+    public static class UnderageException extends UserException {
+        public UnderageException() {
+            super(ErrorCode.UNDERAGE);
+        }
+    }
+
 
 }

@@ -2,6 +2,7 @@ package com.kin.jjandolnet.api.domain.expense.dto;
 
 import com.kin.jjandolnet.api.domain.expense.entity.Income;
 import com.kin.jjandolnet.api.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -29,9 +30,12 @@ public class IncomeDto {
     @Getter
     @Builder
     public static class CuRequest {
+
+        @Schema(example = "10000")
         @NotNull(message = "금액은 필수입니다.")
         @Positive(message = "금액은 0원보다 커야 합니다.")
         private Long amount;
+        @Schema(example = "2026-05")
         @NotBlank(message = "잘못된 날짜 값입니다.")
         private String incomeDate;
 

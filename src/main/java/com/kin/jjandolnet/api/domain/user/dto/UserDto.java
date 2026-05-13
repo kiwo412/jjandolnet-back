@@ -58,10 +58,12 @@ public class UserDto {
         @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
         private String password;
 
+        @Schema(example = "test1234")
         @NotBlank(message = "닉네임은 필수 입력값입니다.")
         @Size(min = 2, max = 10, message = "닉네임은 2~10자 사이여야 합니다.")
         private String nickname;
 
+        @Schema(example = "1991-01-01")
         @NotNull(message = "생년월일은 필수 입력값입니다.")
         @Past(message = "생년월일을 제대로 입력해 주세요.")
         private LocalDate birthDate;
@@ -69,9 +71,11 @@ public class UserDto {
         @NotNull(message = "성별을 선택해주세요.")
         private Gender gender;
 
+        @Schema(example = "1")
         @NotNull(message = "거주 지역을 선택해주세요.")
         private Long addressId;
 
+        @Schema(example = "1")
         @NotNull(message = "직업을 선택해주세요.")
         private Long jobId;
 
@@ -98,13 +102,16 @@ public class UserDto {
         @Pattern(regexp = "^$|^.{8,}$", message = "비밀번호는 최소 8자 이상이어야 합니다.")
         private String password;
 
+        @Schema(example = "test1234")
         @NotBlank(message = "닉네임은 필수 입력값입니다.")
         @Size(min = 2, max = 10, message = "닉네임은 2~10자 사이여야 합니다.")
         private String nickname;
 
+        @Schema(example = "1")
         @NotNull(message = "거주 지역을 선택해주세요.")
         private Long addressId;
 
+        @Schema(example = "1")
         @NotNull(message = "직업을 선택해주세요.")
         private Long jobId;
 
@@ -114,6 +121,7 @@ public class UserDto {
     @Builder
     public static class FindIdRequest {
 
+        @Schema(example = "1991-01-01")
         @NotNull(message = "생년월일은 필수 입력값입니다.")
         @Past(message = "생년월일을 제대로 입력해 주세요.")
         private LocalDate birthDate;
@@ -121,9 +129,11 @@ public class UserDto {
         @NotNull(message = "성별을 선택해주세요.")
         private Gender gender;
 
+        @Schema(example = "1")
         @NotNull(message = "거주 지역을 선택해주세요.")
         private Long addressId;
 
+        @Schema(example = "1")
         @NotNull(message = "직업을 선택해주세요.")
         private Long jobId;
 

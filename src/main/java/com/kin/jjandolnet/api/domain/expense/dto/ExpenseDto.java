@@ -3,6 +3,7 @@ package com.kin.jjandolnet.api.domain.expense.dto;
 import com.kin.jjandolnet.api.domain.expense.entity.Expense;
 import com.kin.jjandolnet.api.domain.expense.entity.ExpenseCategory;
 import com.kin.jjandolnet.api.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -39,12 +40,15 @@ public class ExpenseDto {
     @Builder
     public static class CreateRequest {
 
+        @Schema(example = "1000")
         @NotNull(message = "금액은 필수입니다.")
         @Positive(message = "금액은 0원보다 커야 합니다.")
         private Long amount;
+        @Schema(example = "memo content")
         private String memo;
         @NotNull(message = "날짜는 필수 입니다.")
         private LocalDate expenseDate;
+        @Schema(example = "1")
         @NotNull(message = "카테고리는 필수입니다.")
         private Long categoryId;
 
@@ -63,14 +67,18 @@ public class ExpenseDto {
     @Builder
     public static class UpdateRequest {
 
+        @Schema(example = "1")
         @NotNull(message = "ID는 필수입니다.")
         private Long id;
+        @Schema(example = "1000")
         @NotNull(message = "금액은 필수입니다.")
         @Positive(message = "금액은 0원보다 커야 합니다.")
         private Long amount;
+        @Schema(example = "memo content")
         private String memo;
         @NotNull(message = "날짜는 필수 입니다.")
         private LocalDate expenseDate;
+        @Schema(example = "1")
         @NotNull(message = "카테고리는 필수입니다.")
         private Long categoryId;
 

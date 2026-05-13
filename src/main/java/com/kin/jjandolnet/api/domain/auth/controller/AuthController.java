@@ -4,8 +4,9 @@ import com.kin.jjandolnet.api.domain.auth.dto.AuthDto;
 import com.kin.jjandolnet.api.domain.auth.dto.TokenDto;
 import com.kin.jjandolnet.api.domain.auth.service.AuthService;
 import com.kin.jjandolnet.global.common.ApiResponse;
-import com.kin.jjandolnet.global.error.exception.BusinessException;
 import com.kin.jjandolnet.global.error.exception.ErrorCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Optional;
 
+@Tag(name = "01. AuthController", description = "인증 관련 API (로그인)")
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -26,12 +28,14 @@ import java.util.Optional;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenDto.Response>> login(@Valid @RequestBody AuthDto.LoginRequest request) {
         TokenDto.Response tokenResponseDto = authService.login(request);
         return createTokenResponseWithCookie(tokenResponseDto);
     }
 
+    @Operation(summary = "토큰 리프레시")
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenDto.Response>> refresh(HttpServletRequest request) {
         // 쿠키에서 refreshToken 추출
@@ -48,6 +52,7 @@ public class AuthController {
         return createTokenResponseWithCookie(tokenResponseDto);
     }
 
+    @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout() {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")

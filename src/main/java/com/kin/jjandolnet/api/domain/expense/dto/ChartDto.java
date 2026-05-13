@@ -1,5 +1,6 @@
 package com.kin.jjandolnet.api.domain.expense.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -70,8 +71,10 @@ public class ChartDto {
     @Getter
     @Builder
     public static class searchCondition {
+        @Schema(example = "age")
         @NotBlank(message = "검색조건을 선택 해야합니다.")
         private String filter;
+        @Schema(example = "0")
         @NotNull(message = "검색조건을 선택 해야합니다.")
         private Long selectedCategory;
 

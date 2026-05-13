@@ -35,6 +35,21 @@ spring:
             enable: true
             trust: smtp.naver.com
 
+#swagger - local
+springdoc:
+  #packages-to-scan: com.kin.jjandolnet.api.domain
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html
+    #groups-order: DESC
+    operationsSorter: method
+    display-request-duration: true
+    tags-sorter: alpha
+    persist-authorization: true
+  api-docs:
+    path: /api-docs
+
 jwt:
   # 최소 32자 이상의 긴 문자열을 권장
   secret:
