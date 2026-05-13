@@ -1,6 +1,7 @@
 package com.kin.jjandolnet.global.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kin.jjandolnet.global.error.exception.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +18,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // 필터에서 저장한 에러 코드를 가져옴
-        String exception = (String) request.getAttribute("expired");
+        ErrorCode errorCode = (ErrorCode) request.getAttribute("exception");
+
+        // 기본 401 에러 - 잘못된 접근입니다.
+        if (errorCode == null) {
+            errorCode = ErrorCode.UNAUTHORIZED;
+        }
 
         // 응답 설정
         response.setContentType("application/json;charset=UTF-8");
@@ -25,12 +31,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         Map<String, Object> body = new HashMap<>();
 
-        if ("T002".equals(exception)) { // 만료된 경우 (ErrorCode.EXPIRED_TOKEN.getCode() 값)
-            body.put("code", "T002");
-            body.put("message", "Access Token Expired");
+        if ("T002".equals(errorCode.getCode())) {
+            body.put("code", errorCode.getCode());
+            body.put("message", errorCode.getMessage());
         } else {
-            body.put("code", "T001");
-            body.put("message", "Invalid Token or Unauthorized");
+            body.put("code", errorCode.getCode());
+            body.put("message", errorCode.getMessage());
         }
 
         // JSON으로 변환하여 응답
