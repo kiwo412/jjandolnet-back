@@ -5,11 +5,21 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${cors.swagger.url}")
+    private String swaggerUrl;
+
+    @Value("${cors.swagger.description}")
+    private String swaggerDescription;
 
     private static final String SWAGGER_DESCRIPTION =
             "<h3>[API 테스트 권장 순서]</h3>" +
@@ -33,11 +43,17 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
+
+        Server server = new Server();
+        server.setUrl(swaggerUrl);
+        server.setDescription(swaggerDescription);
+
         return new OpenAPI()
                 .info(new Info()
                         .title("짠돌넷 API 명세서")
                         .description(SWAGGER_DESCRIPTION)
                         .version("v1.0.0"))
+                .servers(List.of(server))
                 //.addSecurityItem(securityRequirement)
                 .components(new Components().addSecuritySchemes(jwtSchemeName, securityScheme));
     }
